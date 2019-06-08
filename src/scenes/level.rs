@@ -59,6 +59,11 @@ impl LevelScene {
             .create_entity()
             .with(components::Score::default())
             .build();
+        world
+            .specs_world
+            .create_entity()
+            .with(components::GameState::default())
+            .build();
 
         let dispatcher = Self::register_systems();
         LevelScene {
@@ -163,8 +168,20 @@ impl scene::Scene<World, input::Event> for LevelScene {
             s.score = sc;
         }
 
+        let game_state = gameworld.specs_world.read_storage::<c::GameState>();
+        for g in game_state.join() {
+            if g.matubokkuri_fall == 10 {
+                self.done = true;
+            }
+        }
+
         if self.done {
-            scene::SceneSwitch::Pop
+            ctx.continuing = false;
+            for s in (&mut score).join() {
+                println!("Good Game!");
+                println!("Score: {}", s.score);
+            }
+            scene::SceneSwitch::None
         } else {
             scene::SceneSwitch::None
         }

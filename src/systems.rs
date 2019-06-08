@@ -31,10 +31,11 @@ impl<'a> specs::System<'a> for MatubokkuriSystem {
         specs::WriteStorage<'a, Position>,
         specs::WriteStorage<'a, Matubokkuri>,
         specs::WriteStorage<'a, Motion>,
+        specs::WriteStorage<'a, GameState>,
         specs::Read<'a, WindowMode>,
     );
 
-    fn run(&mut self, (entities, mut pos, mut mat, mut motion, window_mode): Self::SystemData) {
+    fn run(&mut self, (entities, mut pos, mut mat, mut motion, mut game_state, window_mode): Self::SystemData) {
         let mut mat_exhausted = false;
         for (mot, p, m) in (&mut motion, &pos, &mut mat).join() {
             if m.is_active() {
@@ -62,6 +63,9 @@ impl<'a> specs::System<'a> for MatubokkuriSystem {
                 }, &mut motion)
                 .with(Matubokkuri::default(), &mut mat)
                 .build();
+            for g in (&mut game_state).join() {
+                g.matubokkuri_fall += 1;
+            }
         }
     }
 }
@@ -95,9 +99,10 @@ impl<'a> specs::System<'a> for CollisionSystem {
         specs::WriteStorage<'a, Bird>,
         specs::WriteStorage<'a, Bullet>,
         specs::WriteStorage<'a, Matubokkuri>,
+        specs::Read<'a, WindowMode>,
     );
 
-    fn run(&mut self, (entities, mut pos, mut bird, mut bullet, mut mat): Self::SystemData) {
+    fn run(&mut self, (entities, mut pos, mut bird, mut bullet, mut mat, window_mode): Self::SystemData) {
         let mut v = vec![];
         for (e_bu, p_bu, bi) in (&entities, &pos, &mut bullet).join() {
             for (e_bi, p_bi, bu) in (&entities, &pos, &mut bird).join() {
@@ -122,7 +127,7 @@ impl<'a> specs::System<'a> for CollisionSystem {
         }
         for e in v {
             if let Some(ma) = pos.get_mut(e) {
-                ma.0.y = 30.;
+                ma.0.y =  window_mode.height - 60.;
             }
         }
     }

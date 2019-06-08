@@ -106,6 +106,12 @@ pub struct Score {
     pub score: i32,
 }
 
+#[derive(Clone, Debug, Default, Component)]
+#[storage(HashMapStorage)]
+pub struct GameState {
+    pub matubokkuri_fall: i32,
+}
+
 pub fn register_components(specs_world: &mut World) {
     specs_world.register::<Position>();
     specs_world.register::<Motion>();
@@ -113,4 +119,5 @@ pub fn register_components(specs_world: &mut World) {
     specs_world.register::<Bullet>();
     specs_world.register::<Bird>();
     specs_world.register::<Score>();
+    specs_world.register::<GameState>();
 }
