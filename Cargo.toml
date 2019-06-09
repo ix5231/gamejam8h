@@ -1,13 +1,10 @@
 [package]
-name = "ggez_game_template"
+name = "gamejam8h"
 version = "0.1.0"
-authors = ["Simon Heath <icefoxen@gmail.com>"]
+authors = ["Mitsuki Watanabe <ix5231if@gmail.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 edition = "2018"
-
-[profile.dev]
-opt-level = 1
 
 
 [dependencies]
